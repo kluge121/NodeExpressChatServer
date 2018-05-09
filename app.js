@@ -8,7 +8,8 @@ app.get('/', function (req, res) {
 });
 
 app.listen(port, hostname, function () {
-    console.log('Example app listening on port 3000!');
+    console.log('Example app listening on port 3000!\n');
+    console.log(hostname+":"+port);
 });
 
 
