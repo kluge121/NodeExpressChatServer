@@ -44,6 +44,25 @@ app.get('/', (req, res) => {
     });
 });
 
+app.get('/login', (req, res) => {
+    res.render('login'); // login.ejs 랜더링
+});
+app.post('/login', (req, res) => {
+    const body = req.body; // body-parser 사용
+    if( findUser( body.user_id, body.user_pwd ) ) {
+        // 해당유저가 존재한다면
+        req.session.user_uid = findUserIndex( body.user_id, body.user_pwd ); //유니크한 값 유저 색인 값 저장
+        res.redirect('/');
+    } else {
+        res.send('유효하지 않습니다.');
+    }
+});
+
+app.get('/logout', (req, res) => {
+    delete req.session.user_uid;
+    res.redirect('/');
+});
+
 app.listen(3000, () => {
 
 });
