@@ -1,7 +1,8 @@
 const express = require('express');
 const app = express();
-const host = 'ubuntu@ec2-52-78-135-92.ap-northeast-2.compute.amazonaws.com';
-const config = require('db_info').local;
+// const host = 'ubuntu@ec2-52-78-135-92.ap-northeast-2.compute.amazonaws.com';
+const host = 'localhost';
+const config = require('db_info');
 const testQuery = 'Select * From User';
 
 
