@@ -23,7 +23,7 @@ app.get('/', (req, res) => {
 });
 
 
-app.listen(3000, host, () => {
+app.listen(3000, () => {
     console.log("dd2");
     connection.query(testQuery, (err, rows) => {
         if (err) throw err;
