@@ -1,9 +1,21 @@
 const express = require('express');
 const app = express();
-// const host = 'ubuntu@ec2-52-78-135-92.ap-northeast-2.compute.amazonaws.com';
-const host = 'localhost';
-const config = require('db_info');
+
+
+const mysql = require('mysql');
 const testQuery = 'Select * From User';
+
+const connection = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: '123123',
+    database: 'NodeChat'
+});
+
+connection.connect((err) => {
+    if (err) throw err;
+    console.log('Connected!');
+});
 
 
 app.get('/', (req, res) => {
@@ -13,17 +25,14 @@ app.get('/', (req, res) => {
 
 app.listen(3000, host, () => {
     console.log("dd2");
-    console.log(config);
+    connection.query(testQuery, (err, rows) => {
+        if (err) throw err;
+
+        console.log('Data received from Db: \n');
+        console.log(rows);
+    });
 });
 
 
-function callback(err, result) {
-    if (err) {
-        throw err
-    }
-    console.log("Selsect Complete");
-    console.log(query.sql);
-
-}
 
 
