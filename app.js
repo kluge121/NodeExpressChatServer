@@ -5,7 +5,7 @@ const session = require('express-session');
 const bcrypt = require('bcrypt-nodejs');
 
 
-
+// view
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
 
