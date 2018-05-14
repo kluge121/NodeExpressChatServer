@@ -5,6 +5,11 @@ const session = require('express-session');
 const bcrypt = require('bcrypt-nodejs');
 
 
+
+app.set('views', __dirname + '/views');
+app.set('view engine', 'ejs');
+
+
 //세션 미들웨어 등록
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(session({
