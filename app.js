@@ -3,7 +3,7 @@ const app = express();
 
 
 const mysql = require('mysql');
-const testQuery = 'Select * From User';
+const testQuery = 'Select * From user';
 
 const connection = mysql.createConnection({
     host: 'localhost',
