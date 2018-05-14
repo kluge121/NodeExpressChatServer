@@ -47,6 +47,7 @@ app.get('/', (req, res) => {
 app.get('/login', (req, res) => {
     res.render('login'); // login.ejs 랜더링
 });
+
 app.post('/login', (req, res) => {
     const body = req.body; // body-parser 사용
     if( findUser( body.user_id, body.user_pwd ) ) {
@@ -57,6 +58,25 @@ app.post('/login', (req, res) => {
         res.send('유효하지 않습니다.');
     }
 });
+
+app.post('/join', (req, res) => {
+    const body = req.body;
+    if( !findUser(body.user_id, body.user_pwd) ) {
+        // 아이디도 중복안되게 분기 해야는데 예제이므로..
+        users.push({
+            user_id: body.user_id,
+            user_pwd: body.user_pwd,
+            user_nickname: body.user_nickname
+        });
+        res.redirect('/login');
+    } else {
+        res.send('이미 존재함');
+    }
+});
+
+
+
+
 
 app.get('/logout', (req, res) => {
     delete req.session.user_uid;
