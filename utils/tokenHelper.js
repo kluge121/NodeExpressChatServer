@@ -30,7 +30,7 @@ module.exports.isValid = function (token, nickname, res) { // 토큰 확인
             resObj = {
                 msg: 'token reissuance',
                 accessToken: reToken
-            }
+            };
             let resObj;
             const returnBoolean = (decoded.id === nickname);
             if (returnBoolean) {
