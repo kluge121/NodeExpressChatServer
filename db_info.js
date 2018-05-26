@@ -14,6 +14,7 @@ module.exports = (function () {
             user: 'root',
             password: '123123',
             database: 'NodeChat',
+            socketPath: '/var/run/mysqld/mysqld.sock'
         },
         dev: {
             host: '52.78.135.92',
@@ -21,6 +22,7 @@ module.exports = (function () {
             user: 'root',
             password: '123123',
             database: 'NodeChat',
+            socketPath: '/var/run/mysqld/mysqld.sock'
         }
     }
 
