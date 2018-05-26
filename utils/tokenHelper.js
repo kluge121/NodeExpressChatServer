@@ -25,15 +25,15 @@ module.exports.isValid = function (token, nickname, res) { // 토큰 확인
     //토큰이 유효하지 않을시 조건없이 그냥 재발급해줌 -> 계정에 대한 보안 x
 
     jwt.verify(token, TOKEN_SECRET, (err, decoded) => {
-        let resObj;
-        if (err) {
+            let resObj;
+            if (err) {
+                let reToken = tokenGenerator(nickname);
+                resObj = {
+                    msg: 'token reissuance',
+                    accessToken: reToken
+                };
 
-            let reToken = tokenGenerator(nickname);
-            resObj = {
-                msg: 'token reissuance',
-                accessToken: reToken
-            };
-
+            }
             const returnBoolean = (decoded.id === nickname);
             if (returnBoolean) {
                 resObj = {
@@ -47,9 +47,11 @@ module.exports.isValid = function (token, nickname, res) { // 토큰 확인
                     accessToken: reToken
                 }
             }
+
+
             res.send(JSON.stringify(resObj));
         }
-    });
+    );
 };
 
 
