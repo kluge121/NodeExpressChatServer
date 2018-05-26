@@ -60,6 +60,7 @@ router.post('/login', (req, res) => {
 
 
         }
+        connection.end();
     });
 
 
