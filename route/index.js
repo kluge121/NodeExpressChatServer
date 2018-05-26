@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db_info = require('../db_info');
 const mysql = require('mysql');
-const connection = mysql.createConnection(db_info.local);
+const connection = mysql.createConnection(db_info.real);
 const tokenHelper = require('../utils/tokenHelper');
 const jwt = require('jsonwebtoken');
 
@@ -41,7 +41,7 @@ router.post('/login', (req, res) => {
                     let token = tokenHelper.tokenGenerator(nickname);
                     let resObj = {
                         msg: "success",
-                        token: token.toString()
+                        accessToken: token.toString()
                     };
                     res.send(JSON.stringify(resObj));
                 })
@@ -49,7 +49,7 @@ router.post('/login', (req, res) => {
                 let token = tokenHelper.tokenGenerator(nickname);
                 let resObj = {
                     msg: "success",
-                    token: token.toString()
+                    accessToken: token.toString()
                 };
                 res.send(JSON.stringify(resObj));
             }

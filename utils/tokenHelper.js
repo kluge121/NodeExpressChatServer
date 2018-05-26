@@ -29,7 +29,7 @@ module.exports.isValid = function (token, nickname, res) { // 토큰 확인
             let reToken = tokenGenerator(nickname);
             resObj = {
                 msg: 'token reissuance',
-                token: reToken
+                accessToken: reToken
             }
         } else {
             let resObj;
@@ -37,13 +37,13 @@ module.exports.isValid = function (token, nickname, res) { // 토큰 확인
             if (returnBoolean) {
                 resObj = {
                     msg: 'success',
-                    token: 'remind'
+                    accessToken: 'remind'
                 };
             } else {
                 let reToken = tokenGenerator(nickname);
                 resObj = {
                     msg: 'token reissuance',
-                    token: reToken
+                    accessToken: reToken
                 }
             }
 
