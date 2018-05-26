@@ -40,7 +40,7 @@ router.post('/login', (req, res) => {
 
                     let token = tokenHelper.tokenGenerator(nickname);
                     let resObj = {
-                        msg: "success",
+                        msg: "join success",
                         accessToken: token.toString()
                     };
                     res.send(JSON.stringify(resObj));

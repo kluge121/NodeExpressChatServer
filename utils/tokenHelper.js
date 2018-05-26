@@ -31,7 +31,6 @@ module.exports.isValid = function (token, nickname, res) { // 토큰 확인
                 msg: 'token reissuance',
                 accessToken: reToken
             }
-        } else {
             let resObj;
             const returnBoolean = (decoded.id === nickname);
             if (returnBoolean) {
