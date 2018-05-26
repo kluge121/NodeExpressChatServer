@@ -26,12 +26,13 @@ module.exports.isValid = function (token, nickname, res) { // 토큰 확인
 
     jwt.verify(token, TOKEN_SECRET, (err, decoded) => {
         if (err) {
+            let resObj;
             let reToken = tokenGenerator(nickname);
             resObj = {
                 msg: 'token reissuance',
                 accessToken: reToken
             };
-            let resObj;
+
             const returnBoolean = (decoded.id === nickname);
             if (returnBoolean) {
                 resObj = {
@@ -45,9 +46,8 @@ module.exports.isValid = function (token, nickname, res) { // 토큰 확인
                     accessToken: reToken
                 }
             }
-
+            res.send(JSON.stringify(resObj));
         }
-        res.send(JSON.stringify(resObj));
     });
 };
 
