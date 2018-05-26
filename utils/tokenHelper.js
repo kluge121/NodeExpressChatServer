@@ -25,8 +25,9 @@ module.exports.isValid = function (token, nickname, res) { // 토큰 확인
     //토큰이 유효하지 않을시 조건없이 그냥 재발급해줌 -> 계정에 대한 보안 x
 
     jwt.verify(token, TOKEN_SECRET, (err, decoded) => {
+        let resObj;
         if (err) {
-            let resObj;
+
             let reToken = tokenGenerator(nickname);
             resObj = {
                 msg: 'token reissuance',
