@@ -9,14 +9,14 @@ module.exports = (function () {
             database: 'NodeChatLocal',
         },
         real: {
-            host: '52.78.135.92',
+            host: '52.78.135.92:3000',
             port: '3306',
             user: 'root',
             password: '123123',
             database: 'NodeChatAWS',
         },
         dev: {
-            host: '52.78.135.92',
+            host: '52.78.135.92:3000',
             port: '3306',
             user: 'root',
             password: '123123',
