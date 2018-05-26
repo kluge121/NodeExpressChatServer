@@ -13,14 +13,14 @@ module.exports = (function () {
             port: '3306',
             user: 'root',
             password: '123123',
-            database: 'NodeChat',
+            database: 'NodeChatAWS',
         },
         dev: {
             host: 'ubuntu@ec2-52-78-135-92.ap-northeast-2.compute.amazonaws.com',
             port: '3306',
             user: 'root',
             password: '123123',
-            database: 'NodeChat',
+            database: 'NodeChatAWS',
         }
     }
 
