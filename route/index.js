@@ -32,10 +32,10 @@ router.post('/login', (req, res) => {
         } else if (accessToken === 'null') { // 토큰어 없다 -> 다시로그인 or 회원가입
 
             if (result.length === 0) {  // 회원가입이 안되어있다면
-                let data = [nickname, 1234];
+                let data = [nickname, accessToken];
                 connection.query('insert into user values (?,?)', data, (err, result) => {
                     if (err) {
-                        console.log(err);
+                        console.log('회원가입 오류 ' + err);
                     }
 
                     let token = tokenHelper.tokenGenerator(nickname);
