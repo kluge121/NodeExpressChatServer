@@ -50,7 +50,7 @@ router.post('/login', (req, res) => {
                 let resObj = {
                     msg: "success",
                     accessToken: token.toString()
-                };
+                }; 
                 res.send(JSON.stringify(resObj));
             }
 
