@@ -8,6 +8,7 @@ const jwt = require('jsonwebtoken');
 
 
 router.use((req, res, next) => {
+
     console.log('Time : ', Date.now());
     next();
 });
@@ -21,34 +22,44 @@ router.post('/login', (req, res) => {
 
     let nickname = req.body.nickname;
     let accessToken = req.body.accessToken;
-
-    if (accessToken === 'null') {
-        //TODO 다시 로그인 요망
-
-    } else {
-        //TODO 토큰으로 다시 로그인
-
-    }
+    let query = 'select * from `user` where `nickname` = ?';
 
 
-    connection.query('select * from `user` where `nickname` = ?', nickname, (err, result) => {
-        if (err) {
+    //DB에서 닉네임 검색
+    connection.query(query, nickname, (err, result) => {
+        if (err) { // 쿼리 오류
             console.log('err : ' + err);
-        } else {
-            if (result.length === 0) {
-                //TODO 회원가입로직
+        } else if (accessToken === 'null') { // 토큰어 없다 -> 다시로그인 or 회원가입
+
+            if (result.length === 0) {  // 회원가입이 안되어있다면
+                let data = [nickname, 1234];
+                connection.query('insert into user values (?,?)', data, (err, result) => {
+                    if (err) {
+                        console.log(err);
+                    }
+
+                    let token = tokenHelper.tokenGenerator(nickname);
+                    let resObj = {
+                        msg: "success",
+                        token: token.toString()
+                    };
+                    res.send(JSON.stringify(resObj));
+                })
+            } else {
+                let token = tokenHelper.tokenGenerator(nickname);
+                let resObj = {
+                    msg: "success",
+                    token: token.toString()
+                };
+                res.send(JSON.stringify(resObj));
             }
 
-            let token = tokenHelper.tokenGenerator(nickname);
-            let resObj = {
-                msg: "success",
-                token: token.toString()
-            };
 
-            res.send(JSON.stringify(resObj))
+        } else { //유효한 토큰 값일 시 로그인
+            tokenHelper.isValid(accessToken, nickname, res);
+
 
         }
-
     });
 
 
