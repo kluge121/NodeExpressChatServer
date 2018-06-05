@@ -7,6 +7,7 @@ module.exports = (function () {
             user: 'root',
             password: 'spdlqj123',
             database: 'NodeChatLocal',
+            socketPath: '/private/tmp/mysql.sock'
         },
         real: {
             host: '52.78.135.92',
