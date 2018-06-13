@@ -14,9 +14,8 @@ app.use(bodyParser.json());
 
 /* router */
 const index = require('./route/index');
-const chat = require('./route/chat');
 
-app.use('/', [index, chat]);
+app.use('/', [index]);
 
 
 const server = http.createServer(app);

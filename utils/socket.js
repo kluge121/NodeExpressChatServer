@@ -9,7 +9,6 @@ module.exports = (io) => {
 
         socket.on('requestCreateChatRoom', (data) => {
 
-
             let nickname = data.nickname;
             let requestNickname = data.requestNickname;
 
@@ -24,29 +23,37 @@ module.exports = (io) => {
                 if (result.length >= 1) {
                     let insertId;
                     let nowDate = new Date();
-                    let insertQuery = 'insert into chatroom(chatName,lastMessage,unreadcount,lastDate,nickname) values(?,?,?,?,?)';
-                    let insertData1 = [requestNickname, "", 0, nowDate, nickname]; // responseUser
-                    let insertData2 = [nickname, "", 0, nowDate, requestNickname]; // requestUser
+                    let insertQuery = 'insert into chatroom(chatName,lastMessage,unreadcount,lastDate,nickname,lastCheckDate) values(?,?,?,?,?,?)';
+                    let insertData1 = [requestNickname, "", 0, nowDate, nickname, nowDate]; // responseUser
+                    let insertData2 = [nickname, "", 0, nowDate, requestNickname, nowDate]; // requestUser
 
                     connection.query(insertQuery, insertData1, (err, rows, field) => {
                         if (err) {
-                            console.log("insert-err1");
+                            console.log(err+"insert-err1");
                         }
+                        console.log(rows);
                         insertId = rows.insertId;
                         connection.query(insertQuery, insertData2, (err, rows, filed) => {
                             if (err) {
                                 console.log("insert-err2");
                             }
 
-                            connection.query('update user set modify = ? where nickname = ?', [date, sender], (error1, results, fields) => {
-                                connection.query('update user set modify = ? where nickname = ?', [date, receiver], (error2, results, fields) => {
+                            connection.query('update user set modify = ? where nickname = ?', [nowDate, nickname], (error1, results, fields) => {
+                                if (err) {
+                                    console.log("update-err1" + error1);
+                                }
+                                connection.query('update user set modify = ? where nickname = ?', [nowDate, requestNickname], (error2, results, fields) => {
+                                    if (err) {
+                                        console.log("update-err2" + error2);
+                                    }
                                     let jsondata = {
                                         'id': insertId,
-                                        'chatName': requestNickname,
+                                        'receiver': nickname,
+                                        'sender': requestNickname,
                                         'lastMessage': "",
                                         'unreadcount': 0,
-                                        'lastDate': nowDate.toJSON(),
-                                        'nickname': nickname,
+                                        'lastDate': nowDate.toMysqlFormat(),
+                                        'lastCheckDate': nowDate.toMysqlFormat()
                                     };
                                     io.of('/').emit('responseCreateChatRoom', jsondata);
                                 });
@@ -62,7 +69,6 @@ module.exports = (io) => {
 
 
         });
-
 
         socket.on('sendMessage', (data) => {
 
@@ -122,10 +128,135 @@ module.exports = (io) => {
 
             connection.query(query, [convertModify, requsetNickName], (error, results, fields) => {
                 if (error) {
-                    console.log("socket.js err5", r)
+                    console.log("socket.js err5")
                 }
 
             })
+        });
+
+        socket.on('unReadCountReadRequest', (data, ackFn) => {
+
+
+            let nickname = data.myNickname;
+            let otherNickname = data.otherNickname;
+
+
+            connection.query('update message set unreadcount = ? where sender = ? and receiver = ?', [0, otherNickname, nickname], (err, result, field) => {
+                if (err) {
+                    console.log('unReadCountReadRequest-1 ' + err);
+
+                }
+                connection.query('select * from message where sender = ? and receiver = ?', [otherNickname, nickname], (err, results) => {
+                    if (err) {
+                        console.log('unReadCountReadRequest-2 ' + err);
+
+                    }
+
+
+                    io.of('/').emit('unReadCountReadResponse', results);
+                });
+
+
+            });
+
+
+            // connection.query('select * from chatroom where nickname = ? and chatName = ?', [nickname, otherNickname], (err, results) => {
+            //     if (err) {
+            //         console.log('unReadCountReadRequest-1 ' + err);
+            //
+            //     }
+            //     serverLastCheckDate = new Date(results[0].lastCheckDate).toMysqlFormat();
+            //
+            //     //채팅방 체크시간이 서버보다 로컬이 더 크다 >> 아직 로컬업데이트가 안됐다.
+            //     // 무조건 서버시간이 더 커야 최신상태이지unReadCountReadResponse
+            //
+            //     if (serverLastCheckDate <= localLastCheckDate) {
+            //         connection.query('update message set unreadcount = ? where (sender = ? and receiver = ?)', [0, otherNickname, nickname, localLastCheckDate], (err, result, field) => {
+            //             if (err) {
+            //                 console.log('unReadCountReadRequest-2 ' + err);
+            //             }
+            //
+            //             connection.query('select * from message where (date >= ?) and ((sender = ? and receiver = ?) or(sender = ? and receiver = ?))', [localLastCheckDate, nickname, otherNickname, otherNickname, nickname],
+            //                 (err, resultsResponse) => {
+            //                     if (err) {
+            //                         console.log('unReadCountReadRequest-3 ' + err);
+            //                     }
+            //                     connection.query('update chatroom set lastCheckDate = ? where chatname = ? and nickname = ?', [localLastCheckDate, otherNickname, nickname], (err, result, field) => {
+            //                         if (err) {
+            //                             console.log('unReadCountReadRequest-4 ' + err);
+            //                         }
+            //                     });
+            //
+            //
+            //                     socket.emit('unReadCountReadResponse', resultsResponse);
+            //
+            //
+            //                 });
+            //
+            //         });
+            //     }
+            //
+            //
+            // });
+            //내가 채팅방에 들어가면 상대방 채팅을 수정해야한다.
+            //(클라이언트에 저장된 마지막체크시간)체크시간과 서버의 체크시간을 비교해서
+
+
+        });
+
+        socket.on('requestAddFriend', (data) => {
+
+            let nickname = data.nickname;
+            let whoFriend = data.whoFriend;
+
+            let selectQuery = 'select * from Friend where nickname = ? and whoFriend = ?';
+            let insetQuery = 'insert into Friend (nickname,whoFriend) values (?, ?)';
+
+            connection.query(selectQuery, [nickname, whoFriend], (err, result) => {
+                if (err) {
+                    console.log('err requestAddFriend tag 1');
+                }
+                if (result.length === 0) {
+                    connection.query(insetQuery, [nickname, whoFriend], (err, result) => {
+                        if (err) {
+                            console.log('err requestAddFriend tag 2');
+                        }
+                        let resObj = {
+                            msg: "success",
+                            nickname: nickname,
+                            whoFriend: whoFriend
+                        };
+
+                        io.of('/').emit('responseAddFriend', resObj);
+                    });
+                } else {
+                    let resObj = {
+                        msg: "fail",
+                    };
+                    io.of('/').emit('responseAddFriend', resObj);
+                }
+
+
+            });
+
+        });
+
+        socket.on('requestRemoveFriend', (data) => {
+            console.log('접근1');
+            let nickname = data.nickname;
+            let whoFriend = data.whoFriend;
+            connection.query('delete from Friend where nickname = ? and whoFriend = ?', [nickname, whoFriend], (err, result) => {
+                if (err) {
+                    console.log("err requestRemoveFriend - 1")
+                }
+
+                let resObj = {
+                    nickname: nickname,
+                    whoFriend: whoFriend
+                };
+                io.of('/').emit('responseRemoveFriend', resObj);
+            });
+
         });
 
 

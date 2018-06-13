@@ -67,31 +67,44 @@ router.post('/login/modify', (req, res) => {
 
     let nickname = req.body.nickname;
     let modify = req.body.modify; // localDatetime
+    let localTime = new Date(modify);
+    // let chatRoomQuery = 'select * from chatroom';requestCreateChatRoom
 
+    let selectTimeQuery = 'select modify from user where nickname =?';
+    let chatRoomQuery = 'select * from chatroom where lastDate > ? AND lastDate <= ? AND nickname = ?';
+    let messageQuery = 'select * from message where (date > ? AND date <= ? )AND (sender = ? OR receiver =?)';
 
-    let convertModify = new Date(modify).toMysqlFormat();
-    // let chatRoomQuery = 'select * from chatroom';
-    let chatRoomQuery = 'select * from chatroom where lastDate >= ? AND nickname = ?';
-    let messageQuery = 'select * from message where date >= ? AND (sender = ? OR receiver =?)';
-
-    console.log('시간 ' + convertModify);
-
-    connection.query(chatRoomQuery, [convertModify, nickname], (err, result1) => {
+    connection.query(selectTimeQuery, [nickname], (err, result) => {
         if (err) {
-            console.log('1차에러' + err);
+            console.log('0차에러' + err);
         }
 
+        let serverDate = new Date(result[0].modify);
 
-        connection.query(messageQuery, [convertModify, nickname, nickname], (err, result2) => {
+
+        console.log(localTime + '//'+serverDate);
+        console.log(localTime + '//'+serverDate);
+
+        connection.query(chatRoomQuery, [localTime, serverDate, nickname], (err, result1) => {
             if (err) {
-                console.log('2차에러 ' + err);
+                console.log('1차에러' + err);
             }
-            res.send(JSON.stringify({
-                chatroomlist: result1,
-                messagelist: result2
-            }))
-        });
+            console.log('결과1 ' + result1);
 
+            connection.query(messageQuery, [localTime, serverDate, nickname, nickname], (err, result2) => {
+                if (err) {
+                    console.log('2차에러 ' + err);
+                }
+
+                console.log('결과2 ' + result2);
+
+                res.send(JSON.stringify({
+                    chatroomlist: result1,
+                    messagelist: result2
+                }));
+            });
+
+        });
 
     });
 
